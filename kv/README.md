@@ -2,6 +2,10 @@
 
 **关于 OTP behaviors 的一个 kv 示例**
 
+Architecture:
+
+![architecture](kv.png)
+
 ## Modules
 
 -   KV.Bucket 模块： 负责存储可被不同进程读写的键值对
@@ -35,3 +39,17 @@ KV.Bucket.get(:shopping, "milk)
 创建通用的服务器的首选抽象物
 
 一个 GenServer 实现分为两个部分：客户端 API 和服务端回调函数。 这两部分可以写在同一个模块里，也可以分开写到两个模块中。 客户端和服务端运行于不同进程，依靠调用客户端函数来与服务端来回传递消息。 方便起见，这里我们将这两部分写在一个模块中。
+
+### Supervisor
+
+监督者
+
+```elixir
+KV.Supervisor.start_link
+KV.Registry.create(KV.Registry, "shopping")
+KV.Registry.lookup(KV.Registry, "shopping")
+```
+
+### Application
+
+start()
