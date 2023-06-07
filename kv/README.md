@@ -52,4 +52,23 @@ KV.Registry.lookup(KV.Registry, "shopping")
 
 ### Application
 
-start()
+在 mix.exs 里面添加：
+
+```elixir
+def application do
+  [applications: [:logger],
+   mod: {KV, []}]
+end
+```
+
+`lib/kv.ex` 里面添加 `Application`需要用到的 `start()`:
+
+```elixir
+defmodule KV do
+  use Application
+
+  def start(_type, _args) do
+    KV.Supervisor.start_link
+  end
+end
+```
