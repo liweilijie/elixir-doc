@@ -21,3 +21,17 @@ Agent.update(agent, fn list -> ["eggs"|list] end) # :ok
 Agent.get(agent, fn list -> list end) # ["egges"]
 Agent.stop(agent)
 ```
+
+由于 agent 是进程，每个 bucket 只有一个进程 id（pid）而不是名字。 在《入门手册》中进程那章中提到过，我们可以给进程注册名字。 我们可以使用这个方法来给 bucket 起名：
+
+```elixir
+Agent.start_link(fn -> %{} end, name: shopping)
+KV.Bucket.put(:shopping, "milk", 1)
+KV.Bucket.get(:shopping, "milk)
+```
+
+### GenServer
+
+创建通用的服务器的首选抽象物
+
+一个 GenServer 实现分为两个部分：客户端 API 和服务端回调函数。 这两部分可以写在同一个模块里，也可以分开写到两个模块中。 客户端和服务端运行于不同进程，依靠调用客户端函数来与服务端来回传递消息。 方便起见，这里我们将这两部分写在一个模块中。
