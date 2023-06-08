@@ -40,6 +40,16 @@ KV.Bucket.get(:shopping, "milk)
 
 一个 GenServer 实现分为两个部分：客户端 API 和服务端回调函数。 这两部分可以写在同一个模块里，也可以分开写到两个模块中。 客户端和服务端运行于不同进程，依靠调用客户端函数来与服务端来回传递消息。 方便起见，这里我们将这两部分写在一个模块中。
 
+### GenEvent
+
+派生一个事件管理器，用来向多个处理者发布事件消息。
+
+```elixir
+{:ok, manager} = GenEvent.start_link
+GenEvent.sync_notify(manager, :hello)
+GenEvent.notify(manager, :world)
+```
+
 ### Supervisor
 
 监督者
