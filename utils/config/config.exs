@@ -9,6 +9,14 @@
 # move said applications out of the umbrella.
 import Config
 
+config :friends, Friends.Repo,
+  database: "elixirdbs",
+  username: "elixir",
+  password: "sbso129129",
+  hostname: "localhost"
+
+config :friends, ecto_repos: [Friends.Repo]
+
 # Sample configuration:
 #
 #     config :logger, :console,
