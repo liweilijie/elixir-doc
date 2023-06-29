@@ -2,6 +2,12 @@
 
 elixir learning document.
 
+有三周多没回来写代码,接下来还不知道还有多少天要耽搁.这是我和小伙伴刚出来的一个月时间我就一直有各种不得已的事情.
+
+但是我想我需要更多的努力,更坚定的信念来做好我们的事情. elixir 是我刚出来遇到的一座山.我想我一定要坚持地看完它,并且用它做好我想要做的高并发.
+
+加油.
+
 ## IDE.vscode
 
 插件:
@@ -71,4 +77,21 @@ JetBrains IDEs have autosave turned on by default, but you can adjust the settin
 mix ecto.drop
 mix ecto.create
 mix ecto.migrate
+```
+
+## function one line
+
+[one line](https://stackoverflow.com/questions/33983394/elixir-what-is-syntax-for-function-definitions)
+
+You've combined two forms of method definition there - the shorter one-line syntax and the longer do/end syntax.
+
+```elixir
+# one line
+def foobar(foo, bar), do: baz
+
+# multi-line method
+def foobar(foo, bar) do
+    foo
+    bar
+end
 ```
