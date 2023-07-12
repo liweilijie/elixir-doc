@@ -334,6 +334,32 @@ end
 递归的使用.
 
 ```elixir
+defmodule Sum do
+    def up_to(0), do: 0
+    def up_to(n), do: n + up_to(n - 1)
+end
+
+up_to(5)
+# = 5 + up_to(4)
+# = 5 + 4 + up_to(3)
+# = 5 + 4 + 3 + up_to(2)
+# = 5 + 4 + 3 + 2 + up_to(1)
+# = 5 + 4 + 3 + 2 + 1 + up_to(0)
+# = 5 + 4 + 3 + 2 + 1 + 0
+# = 15
+
+
+# 遍历列表,将所有数累加
+defmodule Math do
+    def sum([]), do: 0
+    def sum([head | tail]), do: head + sum(tail)
+end
+
+Math.sum([10, 5, 15]) # 30
+Math.sum([]) # 0
+```
+
+```elixir
 defmodule Recursion do
     def print_multiple_times(msg, n) when n <= 1 do
         IO.puts msg
