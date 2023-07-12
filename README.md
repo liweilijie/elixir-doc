@@ -131,6 +131,43 @@ elem(tuple, 1) # "hello"
 
 **pattern matching**
 
+函数式编程很依赖模式匹配, 我们用模式匹配来决定执行哪个函数,从而控制流程.
+
+检查 **=** 运算符两边是否相等的过程就是模式匹配.
+
+模式匹配的用处:
+
+-   变量赋值
+-   提取值
+-   决定调用哪个函数
+
+模式匹配还能用来检查和提取各种类型的数据,从而解决更复杂的问题.
+
+`x=1` 这是模式匹配, **Elixir** 将值 **1** 绑定到变量 **x** 使两边相等.
+
+`2 = x` 的模式匹配相当于:
+
+```elixir
+if 2 == x
+    2
+else
+    raise MatchError
+end
+```
+
+**匹配部分字符串**
+
+字符串匹配模式唯一限制是不能在<>运算符的左侧使用变量
+
+```elixir
+"Authentication: " <> credentials = "Authentication: Basic dXNlcjpwYXNz"
+credentials # credentials is Basic dXNlcjpwYXNz
+
+
+# 字符串匹配模式唯一限制是不能在<>运算符的左侧使用变量
+first_name <> " Doe" = "John Doe" # 会报错
+```
+
 ```elixir
 {:ok, result} = {:ok, 13} # result is 13
 [a, 2, 3] = [1, 2, 3] # a is 1
@@ -138,6 +175,10 @@ elem(tuple, 1) # "hello"
 # [head|tail]这种形式不光在模式匹配时可以用，还可以用作向列表插入前置数值：
 list = [1,2,3]
 [0|list] # [0,1,2,3]
+
+[head | tail] = [:a] # head is :a, tail is [] 空列表
+[ head | tail] = [] # MatchError 报错
+[a, b | rest] = [1,2,3,4] # a is 1, b is 2
 ```
 
 **pin**
@@ -225,9 +266,19 @@ map.a # 1
 
 `&(&1+1)` => `fn x->x+1 end`
 
+-   & 开始定义函数, &运算符后面的括号是可选的.
+-   &1 第一个参数
+-   &2 第二个参数
+
 ```elixir
 fun = &(&1 +1)
 fun.(1) # 2
+
+total_cost = &(&1 * &2)
+total_cost.(10, 2)
+
+mult_by_2 = & &1 * 2
+mult_by_2.(3)
 ```
 
 默认参数 `\\`
@@ -242,9 +293,60 @@ IO.puts Concat.join("hello", "world")
 IO.puts Concat.join("hello", "world", "_")
 ```
 
+```elixir
+# 这是将具名函数绑定到变量或者函数参数的快捷方法.
+upcase = &String.upcase/1
+upcase.("hello, world!")
+```
+
+**用函数来控制流程**
+
+比较两个数大的一个返回.
+
+```elixir
+defmodule NumberCompare do
+    def greater(number, other_number) do
+        check(number >= other_number, number, other_number)
+    end
+
+    defp check(true, number, _), do: number
+    defp check(false, _, other_number), do: other_number
+end
+```
+
+使用 guard clause 简化定义辅助函数的需求:
+
+```elixir
+defmodule NumberCompare do
+    def greater(number, other_number) when number >= other_number, do: number
+    def greater(_, other_number), do: other_number
+end
+
+defmodule Checkout do
+    def total_cost(price, tax_rate) when price >= 0 and tax_rate >= 0 do
+        price * (tax_rate + 1)
+    end
+end
+```
+
 **recursion**
 
 递归的使用.
+
+```elixir
+defmodule Recursion do
+    def print_multiple_times(msg, n) when n <= 1 do
+        IO.puts msg
+    end
+
+    def print_multiple_times(msg, n) do
+        IO.puts msg
+        print_multiple_times(msg, n - 1)
+    end
+end
+
+Recursion.print_multiple_times("hello", 3)
+```
 
 ## 代码片段
 
@@ -275,4 +377,30 @@ defmodule Guess do
 end
 
 Guess.guess()
+```
+
+```elixir
+# map函数知道如何将String.upcase应用于列表中的每个项目,其结果是一个新列表,所有的单词都是大写的.
+Enum.map(["dog", "cats", "flowers"], &String.upcase/1)
+
+# input: the dark tower
+# output: The Dark Tower
+def capitalize_words(title) do
+    title
+    |> String.split
+    |> capitalize_all
+    |> join_with_whitespace
+end
+```
+
+声明式编程思绪侧重于必要的内容,使用递归函数遍历或者循环列表.
+
+```elixir
+# 转换为大写
+defmodule StringList do
+    def upcase([]), do: []
+    def upcase([first | rest]), do: [String.upcase(first) | upcase(rest)]
+end
+
+StringList.upcase(["dogs", "hot dogs", "bananas"])
 ```
