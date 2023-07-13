@@ -8,6 +8,40 @@ elixir learning document.
 
 加油.
 
+## Hex
+
+[Hex](https://hex.pm/) 是 **Elixir** 的包管理器(https://hex.pm).
+
+```bash
+mix local.hex --force
+```
+
+这里我们用到 **Mix**。**Mix** 是 **Elixir** 的构建工具，提供许多便捷功能，比如项目创建、编译、测试等等。
+
+## 常用命令
+
+```bash
+iex -S mix
+iex -S mix run -e HelloMain.main
+
+mix run --no-halt
+mix do deps.get
+mix compile
+
+mix help cmd
+mix cmd --app app1 --app app2 mix test
+
+
+# mix do run app1.exs, run app2.exs
+mix do run ethereum_jsonrpc --no-halt
+
+mix ecto.migrate
+mix ecto.rollback
+mix phx.routes # prints all routes
+mix clean
+mix phx.server
+```
+
 ## IDE.vscode
 
 插件:
@@ -331,7 +365,7 @@ end
 
 **recursion**
 
-递归的使用.
+递归的使用. 递归是函数式编程里面最难理解的事情之一,确定终止条件和函数自己调用自己都让人觉得费解.
 
 ```elixir
 defmodule Sum do
@@ -372,6 +406,53 @@ defmodule Recursion do
 end
 
 Recursion.print_multiple_times("hello", 3)
+```
+
+TODO:
+
+```elixir
+@enchanter_name "Edwin"
+
+def enchant_for_sale([]), do: []
+def enchant_for_sale([item = %{magic: true} | incoming_items]) do
+    [item | enchant_for_sale(incoming_items)]
+end
+def enchant_for_sale([item | incoming_items]) do
+    new_item = %{
+        title: "#{@enchanter_name}'s #{item.title}",
+        price: item.price * 3,
+        magic: true
+    }
+
+    [new_item | enchant_for_sale(incoming_items)]
+end
+```
+
+阶乘的递归:
+
+```elixir
+defmodule Factoral do
+    def of(0), do: 1
+    def of(n) when n > 0, do: n * of(n - 1) # n > 0 确保不会对负数求阶乘
+end
+```
+
+TODO:
+
+分治法排序列表:
+
+```elixir
+
+```
+
+**高阶函数**
+
+高阶函数是那些参数中包含有函数或者返回函数的函数.
+
+```elixir
+File.open("file.txt", [:write], &(IO.write(&1, "Hello, World!")))
+
+spawn fn -> IO.puts "Hello, World!" end
 ```
 
 ## 代码片段
@@ -429,4 +510,34 @@ defmodule StringList do
 end
 
 StringList.upcase(["dogs", "hot dogs", "bananas"])
+```
+
+## Agent
+
+[Agent](https://github.com/straightdave/advanced_elixir/blob/master/02-agent.md)
+
+```elixir
+# 常用方法
+{:ok, agent} = Agent.start_link fn -> [] end
+Agent.update(agent, fn list -> ["eggs" | list] end)
+Agent.get(agent, fn list -> list end)
+Agent.stop(agent)
+```
+
+kv 示例:
+
+```elixir
+defmodule KV.Bucket do
+    def start_link do
+        Agent.start_link(fn -> %{} end)
+    end
+
+    def get(bucket, key) do
+        Agent.get(bucket, &Map.get(&1, key))
+    end
+
+    def put(bucket, key, value) do
+        Agent.update(bucket, &Map.put(&1, key, value))
+    end
+end
 ```
