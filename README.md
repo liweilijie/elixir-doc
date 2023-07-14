@@ -42,6 +42,13 @@ mix clean
 mix phx.server
 ```
 
+**交互式命令**
+
+```bash
+iex -S mix
+c "lib/one_for_one.exs" # load a script or a module to current IEx session
+```
+
 ## IDE.vscode
 
 插件:
@@ -541,3 +548,45 @@ defmodule KV.Bucket do
     end
 end
 ```
+
+**bitstring,binary,binary-size(^n)**
+
+[https://hexdocs.pm/elixir/Kernel.SpecialForms.html#%3C%3C%3E%3E/1](https://hexdocs.pm/elixir/Kernel.SpecialForms.html#%3C%3C%3E%3E/1)
+
+```elixir
+<<name::binary-size(5)>>, " the ", species::binary>> = <<"Frank the Walrus">>
+{name, species} # {"Frank", "Walrus"}
+
+name_size = 5
+<<name::binary-size(^name_size), " the ", species::binary>> = <<"Frank the Walrus">>
+{name, species} # {"Frank", "Walrus"}
+
+<<name_size::size(8), name::binary-size(name_size), " the ", species::binary>> = <<"Frank the Walrus">>
+{name, species} # {"Frank", "Walrus"}
+```
+
+**compute POW**
+
+```elixir
+defp proof_of_work(last_proof) do
+    work(last_proof, 0)
+end
+
+defp work(last_proof, proof) do
+    binary_guess = Integer.to_string(last_proof) <> Integer.to_string(proof) <> <<0>> # <<50, 56, 49, 57, 56, 52, 48, 55, 51, 57, 54, 55, 50, 0>>
+
+    <<guess::binary-size(5), _::binary>> =
+    :crypto.hash(:sha, binary_guess)
+    |> Base.encode16()
+
+    guess # like: "920F9", "FE1EE", "00000"
+    |> case do
+        "00000" -> proof
+        _ -> work(last_proof, proof + 1)
+    end
+end
+```
+
+## 推荐阅读
+
+-   [上帝说：要有一门面向未来的语言，于是有了 erlang](content.md)

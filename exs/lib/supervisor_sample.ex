@@ -47,7 +47,6 @@ defmodule PseudoServerC do
 end
 
 defmodule SupervisorTest do
-  alias Task.Supervisor
   import Supervisor.Spec
 
   def init() do
